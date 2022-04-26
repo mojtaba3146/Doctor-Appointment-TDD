@@ -4,4 +4,17 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Appointments\Contracts\" />
+    <Folder Include="Appointments\Exceptions\" />
+    <Folder Include="Doctors\Exceptions\" />
+    <Folder Include="Patients\Contracts\" />
+    <Folder Include="Patients\Exceptions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DoctorAppointment.Entities\DoctorAppointment.Entities.csproj" />
+    <ProjectReference Include="..\DoctorAppointment.Infrastructure\DoctorAppointment.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

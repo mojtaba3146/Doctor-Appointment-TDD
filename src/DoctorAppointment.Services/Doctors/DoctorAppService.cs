@@ -1,6 +1,7 @@
 ﻿using DoctorAppointment.Entities;
 using DoctorAppointment.Infrastructure.Application;
 using DoctorAppointment.Services.Doctors.Contracts;
+using DoctorAppointment.Services.Doctors.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,57 @@ namespace DoctorAppointment.Services.Doctors
                 NationalCode = dto.NationalCode,
             };
 
+            var isDoctorExist = _repository
+                .IsExistNationalCode(doctor.NationalCode);
+
+            if (isDoctorExist)
+            {
+                throw new DoctorAlreadyExistException();
+            }
+
             _repository.Add(doctor);
+            _unitOfWork.Commit();
+        }
+
+        public void Delete(int id)
+        {
+            var doctor = _repository.GetById(id);
+
+            if (doctor == null)
+            {
+                throw new DoctorDoesNotExsitException();
+            }
+            _repository.Delete(doctor);
+            _unitOfWork.Commit();
+        }
+
+        public List<GetAllDoctorsDto> GetAll()
+        {
+            return _repository.GetAllDoctors();
+        }
+
+        public void Update(int id, UpdateDoctorDto dto)
+        {
+           var doctor=_repository.GetById(id);
+
+            if (doctor == null)
+            {
+                throw new DoctorDoesNotExsitException();
+            }
+
+            var isDoctorExist = _repository
+                .IsExistNationalCodeWithId(dto.NationalCode, doctor.Id);
+
+            if (isDoctorExist)
+            {
+                throw new DoctorNationalCodeAlreadyExist();
+            }
+
+            doctor.FirstName = dto.FirstName;
+            doctor.LastName = dto.LastName;
+            doctor.Field = dto.Field;
+            doctor.NationalCode = dto.NationalCode;
+
             _unitOfWork.Commit();
         }
     }

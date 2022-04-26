@@ -10,6 +10,10 @@ namespace DoctorAppointment.Persistence.EF
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext(string connectionString) :
+            this(new DbContextOptionsBuilder().UseSqlServer(connectionString).Options)
+        {
+        }
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }

@@ -7,7 +7,6 @@
   <ItemGroup>
     <Folder Include="Appointments\Contracts\" />
     <Folder Include="Appointments\Exceptions\" />
-    <Folder Include="Doctors\Exceptions\" />
     <Folder Include="Patients\Contracts\" />
     <Folder Include="Patients\Exceptions\" />
   </ItemGroup>

@@ -55,12 +55,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void GetAll_returns_all_appointments()
         {
-            var doctor = DoctorFactory.CreateDoctor();
-            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var patient = PatientFactory.CreatePatient();
-            _dataContext.Manipulate(_ => _.Patients.Add(patient));
-            Appointment appointmnet = CreateAppointment(doctor, patient);
-            _dataContext.Manipulate(_ => _.Appointments.Add(appointmnet));
+            Appointment appointmnet = Create_doctor_patient_appointment();
 
             var expected = _sut.GetAll();
 
@@ -73,12 +68,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void Update_updates_appointment_properly()
         {
-            var doctor = DoctorFactory.CreateListOfDoctors();
-            _dataContext.Manipulate(_ => _.Doctors.AddRange(doctor));
-            var patientList = PatientFactory.CreateListOfPatients();
-            _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
-            List<Appointment> appointmentList = CreateListOfAppointment();
-            _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
+            List<Appointment> appointmentList = Create_list_of_appointments();
             UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = appointmentList[4].Id;
 
@@ -94,10 +84,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void Update_throw_AppointmentDoesNotExsitException_when_appointment_with_given_id_is_not_exist()
         {
-            var doctor = DoctorFactory.CreateDoctor();
-            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var patient = PatientFactory.CreatePatient();
-            _dataContext.Manipulate(_ => _.Patients.Add(patient));
+            Create_doctor_patient();
             UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = 100;
 
@@ -109,12 +96,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void Delete_deletes_appointment_properly()
         {
-            var doctor = DoctorFactory.CreateDoctor();
-            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var patient = PatientFactory.CreatePatient();
-            _dataContext.Manipulate(_ => _.Patients.Add(patient));
-            Appointment appointmnet = CreateAppointment(doctor, patient);
-            _dataContext.Manipulate(_ => _.Appointments.Add(appointmnet));
+            Appointment appointmnet=Create_doctor_patient_appointment();
             UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = appointmnet.Id;
 
@@ -137,20 +119,15 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void Add_throw_NotEnoughSpaceException_when_doctor_has_more_than_five_appointment_in_one_day()
         {
-            var doctor = DoctorFactory.CreateDoctor();
-            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var patientList = PatientFactory.CreateListOfPatients();
-            _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
-            var appointmentList = CreateListOfAppointmnet();
-            _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
-            AddApointmentDto dto = CreateAppointmnetDtoForException(doctor);
+            AddApointmentDto dto = Create_listOfAppointment_And_updateDto();
 
             Action expected = () => _sut.Add(dto);
 
             expected.Should().ThrowExactly<NotEnoughSpaceException>();
         }
+
         [Fact]
-        public void Add_throw_AppointmentAlreadyExistException_when_doctor_has_appointment_with_patient()
+        public void Add_throw_AppointmentAlreadyExistException_when_doctor_has_appointment_with_patient_inOne_day()
         {
             var doctor = DoctorFactory.CreateDoctor();
             _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
@@ -158,8 +135,8 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
             var appointment = CreateAppointment(doctor, patient);
             _dataContext.Manipulate(_ => _.Appointments.Add(appointment));
-            AddApointmentDto dto = CreateAddAppointmentDtoForExceptionReapet(doctor, patient);
-
+            AddApointmentDto dto = CreatAppointmentDto(doctor, patient);
+            
             Action expected = () => _sut.Add(dto);
 
             expected.Should().ThrowExactly<AppointmentAlreadyExistException>();
@@ -173,7 +150,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
             var appointmentList = CreateListOfAppointment();
             _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
-            UpdateAppointmentDto dto = CreateUpdateDtoForUpdateMoreThanFive();
+            UpdateAppointmentDto dto = CreateUpdateDto();
 
             Action expected = () => _sut.Update(6, dto);
 
@@ -183,20 +160,16 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
         [Fact]
         public void Update_throw_AppointmentAlreadyExistException_when_doctor_has_appointment_with_patient()
         {
-            var doctor = DoctorFactory.CreateDoctor();
-            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var patient = PatientFactory.CreatePatient();
-            _dataContext.Manipulate(_ => _.Patients.Add(patient));
-            var appointment = CreateAppointment(doctor, patient);
-            _dataContext.Manipulate(_ => _.Appointments.Add(appointment));
-            UpdateAppointmentDto dto = CreateUpdateDtoForUpdateMoreThanFive();
+            var appointment = Create_doctor_patient_appointment();
+            UpdateAppointmentDto dto = CreateUpdateDto();
+            var appointmentId = 1;
 
-            Action expected = () => _sut.Update(1,dto);
+            Action expected = () => _sut.Update(appointmentId,dto);
 
             expected.Should().ThrowExactly<AppointmentAlreadyExistException>();
         }
 
-        private static UpdateAppointmentDto CreateUpdateDtoForUpdateMoreThanFive()
+        private static UpdateAppointmentDto CreateUpdateDto()
         {
             return new UpdateAppointmentDto
             {
@@ -205,16 +178,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
                 PatientId = 1
             };
         }
-        private static AddApointmentDto CreateAddAppointmentDtoForExceptionReapet(Doctor doctor, Patient patient)
-        {
-            return new AddApointmentDto
-            {
-                Date = DateTime.Now.Date,
-                PatientId = patient.Id,
-                DoctorId = doctor.Id,
-            };
-        }
-
+       
         private static Appointment CreateAppointment(Doctor doctor, Patient patient)
         {
             return new Appointment
@@ -338,6 +302,44 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
                     PatientId=1
                 }
             };
+        }
+        private Appointment Create_doctor_patient_appointment()
+        {
+            var doctor = DoctorFactory.CreateDoctor();
+            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
+            var patient = PatientFactory.CreatePatient();
+            _dataContext.Manipulate(_ => _.Patients.Add(patient));
+            Appointment appointmnet = CreateAppointment(doctor, patient);
+            _dataContext.Manipulate(_ => _.Appointments.Add(appointmnet));
+            return appointmnet;
+        }
+        private List<Appointment> Create_list_of_appointments()
+        {
+            var doctor = DoctorFactory.CreateListOfDoctors();
+            _dataContext.Manipulate(_ => _.Doctors.AddRange(doctor));
+            var patientList = PatientFactory.CreateListOfPatients();
+            _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
+            List<Appointment> appointmentList = CreateListOfAppointment();
+            _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
+            return appointmentList;
+        }
+        private void Create_doctor_patient()
+        {
+            var doctor = DoctorFactory.CreateDoctor();
+            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
+            var patient = PatientFactory.CreatePatient();
+            _dataContext.Manipulate(_ => _.Patients.Add(patient));
+        }
+        private AddApointmentDto Create_listOfAppointment_And_updateDto()
+        {
+            var doctor = DoctorFactory.CreateDoctor();
+            _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
+            var patientList = PatientFactory.CreateListOfPatients();
+            _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
+            var appointmentList = CreateListOfAppointmnet();
+            _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
+            AddApointmentDto dto = CreateAppointmnetDtoForException(doctor);
+            return dto;
         }
     }
 }

@@ -1,29 +1,28 @@
-﻿using DoctorAppointment.Services.Patients.Contracts;
-using Microsoft.AspNetCore.Http;
+﻿using DoctorAppointment.Services.Appointments.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace DoctorAppointment.RestAPI.Controllers
 {
-    [Route("api/patients")]
+    [Route("api/appointments")]
     [ApiController]
-    public class PatientsController : ControllerBase
+    public class AppointmentsController : Controller
     {
-        private readonly PatientService _service;
+        private readonly AppointmentService _service;
 
-        public PatientsController(PatientService service)
+        public AppointmentsController(AppointmentService service)
         {
             _service = service;
         }
 
         [HttpPost]
-        public void AddPatient(AddPatientDto dto)
+        public void AddAppointment(AddApointmentDto dto)
         {
             _service.Add(dto);
         }
 
         [HttpGet]
-        public List<GetAllPatientDto> GetAll()
+        public List<GetAllAppointmentDto> GetAll()
         {
             return _service.GetAll();
         }
@@ -35,9 +34,10 @@ namespace DoctorAppointment.RestAPI.Controllers
         }
 
         [HttpPut]
-        public void Update(int id, UpdatePatientDto dto)
+        public void Update(int id, UpdateAppointmentDto dto)
         {
             _service.Update(id, dto);
         }
+
     }
 }

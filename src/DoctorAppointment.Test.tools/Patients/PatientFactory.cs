@@ -57,6 +57,34 @@ namespace DoctorAppointment.Test.tools.Patients
                 FirstName = "rahil",
                 LastName = "mostafavi",
                 NationalCode = "130"
+                },
+                new Patient
+                {
+                Id= 3,
+                FirstName = "rrr",
+                LastName = "mmm",
+                NationalCode = "1"
+                },
+                new Patient
+                {
+                Id= 4,
+                FirstName = "bb",
+                LastName = "cc",
+                NationalCode = "2"
+                },
+                new Patient
+                {
+                Id= 5,
+                FirstName = "dd",
+                LastName = "ff",
+                NationalCode = "10"
+                },
+                new Patient
+                {
+                Id= 6,
+                FirstName = "qq",
+                LastName = "ww",
+                NationalCode = "45"
                 }
             };
             return list;

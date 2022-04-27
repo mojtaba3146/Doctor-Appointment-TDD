@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DoctorAppointment.Entities\DoctorAppointment.Entities.csproj" />
+    <ProjectReference Include="..\DoctorAppointment.Persistence.EF\DoctorAppointment.Persistence.EF.csproj" />
     <ProjectReference Include="..\DoctorAppointment.Services\DoctorAppointment.Services.csproj" />
   </ItemGroup>
 

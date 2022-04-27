@@ -79,7 +79,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             _dataContext.Manipulate(_ => _.Patients.AddRange(patientList));
             List<Appointment> appointmentList = CreateListOfAppointment();
             _dataContext.Manipulate(_ => _.Appointments.AddRange(appointmentList));
-            UpdateAppointmentDto dto = CreateUpdateAppointmentDtoForUpdateProperly();
+            UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = appointmentList[4].Id;
 
             _sut.Update(appointmentId, dto);
@@ -98,7 +98,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
             var patient = PatientFactory.CreatePatient();
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
-            UpdateAppointmentDto dto = CreateUpdateAppointmentDto(doctor, patient);
+            UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = 100;
 
             Action expected = () => _sut.Update(appointmentId, dto);
@@ -115,7 +115,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
             Appointment appointmnet = CreateAppointment(doctor, patient);
             _dataContext.Manipulate(_ => _.Appointments.Add(appointmnet));
-            UpdateAppointmentDto dto = CreateUpdateAppointmentDto(doctor, patient);
+            UpdateAppointmentDto dto = CreateUpdateAppointmentDto();
             var appointmentId = appointmnet.Id;
 
             _sut.Delete(appointmentId);
@@ -235,13 +235,13 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
             };
         }
 
-        private static UpdateAppointmentDto CreateUpdateAppointmentDto(Doctor doctor, Patient patient)
+        private static UpdateAppointmentDto CreateUpdateAppointmentDto()
         {
             return new UpdateAppointmentDto
             {
                 Date = DateTime.Now.Date,
-                PatientId = patient.Id,
-                DoctorId = doctor.Id
+                PatientId = 5,
+                DoctorId = 2
             };
         }
 
@@ -291,16 +291,7 @@ namespace DoctorAppointment.Services.Test.Unit.Appointments
                 PatientId = patient.Id,
             };
         }
-        private static UpdateAppointmentDto CreateUpdateAppointmentDtoForUpdateProperly()
-        {
-            return new UpdateAppointmentDto
-            {
-                Date = DateTime.Now.Date,
-                DoctorId = 2,
-                PatientId = 5
-            };
-        }
-
+        
         private static List<Appointment> CreateListOfAppointment()
         {
             return new List<Appointment>

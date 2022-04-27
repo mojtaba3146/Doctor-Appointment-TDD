@@ -35,7 +35,7 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
         }
 
         [Fact]
-        public void Add_adds_Doctor_Properly()
+        public void Add_adds_doctor_properly()
         {
             AddDoctorDto dto = DoctorFactory.CreateAddDoctorDto();
 
@@ -49,7 +49,7 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
         }
 
         [Fact]
-        public void IF_Doctor_NationalCode_Already_Exist_For_Add_Throw_DoctorAlreadyExistException()
+        public void Add_throw_DoctorAlreadyExistException_when_natinalCode_already_exist()
         {
             Doctor doctor = DoctorFactory.CreateDoctor();
             _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
@@ -61,7 +61,7 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
         }
 
         [Fact]
-        public void GetAll_Returns_All_Doctors()
+        public void GetAll_returns_all_doctors()
         {
             Doctor doctor = DoctorFactory.CreateDoctor();
             _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
@@ -69,10 +69,10 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
             var expected = _sut.GetAll();
 
             expected.Should().HaveCount(1);
-            expected.Should().Contain(_ => _.FirstName == "mojtaba" &&
-            _.LastName == "khoshnam" &&
-            _.Field == "brain" &&
-            _.NationalCode == "230");
+            expected.Should().Contain(_ => _.FirstName == doctor.FirstName &&
+            _.LastName == doctor.LastName &&
+            _.Field == doctor.Field &&
+            _.NationalCode == doctor.NationalCode);
         }
 
         [Fact]
@@ -104,12 +104,12 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
         }
 
         [Fact]
-        public void IF_Doctor_NationalCode_Already_Exist_For_Update_Throw_DoctorAlreadyExistException()
+        public void Update_Throw_DoctorAlreadyExistException_when_nationalCode_already_exist()
         {
             List<Doctor> doctors = DoctorFactory.CreateListOfDoctors();
             _dataContext.Manipulate(_ => _.Doctors.AddRange(doctors));
             UpdateDoctorDto dto = DoctorFactory.CreateUpdateDto();
-            var doctorId = 2;
+            var doctorId = doctors[1].Id;
 
             Action expected = () => _sut.Update(doctorId, dto);
 
@@ -121,7 +121,7 @@ namespace DoctorAppointment.Services.Test.Unit.Doctors
         {
             Doctor doctor = DoctorFactory.CreateDoctor();
             _dataContext.Manipulate(_ => _.Doctors.Add(doctor));
-            var doctorId = 1;
+            var doctorId = doctor.Id;
 
             _sut.Delete(doctorId);
 

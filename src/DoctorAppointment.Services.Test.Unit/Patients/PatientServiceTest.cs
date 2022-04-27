@@ -34,7 +34,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void Add_adds_Patient_Properly()
+        public void Add_adds_patient_properly()
         {
             AddPatientDto dto = PatientFactory.CreateAddPatientDto();
 
@@ -47,7 +47,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void IF_Patient_NationalCode_Already_Exist_For_Add_Throw_PatientAlreadyExistException()
+        public void Add_throw_patientAlreadyExistException_when_patient_with_nationalCode_exist()
         {
             Patient patient =PatientFactory.CreatePatient();
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
@@ -59,7 +59,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void GetAll_Returns_All_Patients()
+        public void GetAll_returns_all_patients()
         {
             Patient patient = PatientFactory.CreatePatient();
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
@@ -67,13 +67,13 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
             var expected = _sut.GetAll();
 
             expected.Should().HaveCount(1);
-            expected.Should().Contain(_ => _.FirstName == "Akbar" &&
-            _.LastName == "Yousefi" &&
-            _.NationalCode == "120");
+            expected.Should().Contain(_ => _.FirstName == patient.FirstName &&
+            _.LastName == patient.LastName &&
+            _.NationalCode == patient.NationalCode);
         }
 
         [Fact]
-        public void Update_updates_Patient_Properly()
+        public void Update_updates_patient_properly()
         {
             Patient patient = PatientFactory.CreatePatient();
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
@@ -89,7 +89,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void Update_throw_PatientDoesNotExsitException_When_patient_with_given_id_is_not_exist()
+        public void Update_throw_patientDoesNotExsitException_when_patient_with_given_id_is_not_exist()
         {
             var patientId = 100;
             UpdatePatientDto dto = PatientFactory.CreateUpdateDto();
@@ -100,14 +100,14 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void IF_Patient_NationalCode_Already_Exist_For_Update_Throw_PatientAlreadyExistException()
+        public void Update_throw_PatientAlreadyExistException_when_patient_with_natinalCode_exist()
         {
             List<Patient> patients = PatientFactory.CreateListOfPatients();
             _dataContext.Manipulate(_ => _.Patients.AddRange(patients));
             UpdatePatientDto dto = PatientFactory.CreateUpdateDto();
-            var doctorId = 2;
+            var patientId = patients[1].Id;
 
-            Action expected = () => _sut.Update(doctorId, dto);
+            Action expected = () => _sut.Update(patientId, dto);
 
             expected.Should().ThrowExactly<PatientAlreadyExistException>();
         }
@@ -117,7 +117,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         {
             Patient patient = PatientFactory.CreatePatient();
             _dataContext.Manipulate(_ => _.Patients.Add(patient));
-            var patientId = 1;
+            var patientId = patient.Id;
 
             _sut.Delete(patientId);
 
@@ -126,7 +126,7 @@ namespace DoctorAppointment.Services.Test.Unit.Patients
         }
 
         [Fact]
-        public void Delete_throw_PatientDoesNotExsitException_When_patient_with_given_id_is_not_exist()
+        public void Delete_throw_PatientDoesNotExsitException_when_patient_with_given_id_is_not_exist()
         {
             var patientId = 100;
 
